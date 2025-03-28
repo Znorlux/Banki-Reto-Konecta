@@ -1,83 +1,132 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { CreditCard, DollarSign, Landmark, ShieldCheck } from "lucide-react";
+import {
+  CreditCard,
+  DollarSign,
+  Landmark,
+  ShieldCheck,
+  ChevronRight,
+} from "lucide-react";
 
 const Home = () => {
+  const features = [
+    {
+      icon: CreditCard,
+      color: "blue",
+      title: "Tarjetas de Crédito",
+      description: "Compra lo que quieras, cuando quieras. Sin preocupaciones.",
+    },
+    {
+      icon: DollarSign,
+      color: "green",
+      title: "Préstamos Personales y Empresariales",
+      description:
+        "Haz crecer tus sueños con opciones de financiamiento accesibles.",
+    },
+    {
+      icon: Landmark,
+      color: "purple",
+      title: "Inversiones Inteligentes",
+      description:
+        "Pon tu dinero a trabajar por ti. Estrategias que generan resultados.",
+    },
+    {
+      icon: ShieldCheck,
+      color: "red",
+      title: "Seguridad de Primer Nivel",
+      description:
+        "Tu dinero y datos siempre protegidos con la mejor tecnología.",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-blue-50">
-      <header className="bg-white shadow-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
+      {/* Elegant Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold text-blue-800">Banki</div>
-          <nav className="space-x-6">
-            <Link to="/login" className="text-blue-600 hover:text-blue-800">
-              Login
+          <div className="flex items-center space-x-3">
+            <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-900">
+              Banki
+            </span>
+          </div>
+          <nav className="flex items-center space-x-6">
+            <Link
+              to="/login"
+              className="text-blue-600 font-semibold hover:text-blue-800 transition-colors group flex items-center"
+            >
+              Iniciar Sesión
+              <ChevronRight
+                className="ml-1 group-hover:translate-x-1 transition-transform"
+                size={20}
+              />
             </Link>
           </nav>
         </div>
       </header>
 
+      {/* Hero Section */}
       <main className="container mx-auto px-6 py-16">
-        <section className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold text-blue-900 mb-4">
-            Tu dinero, tus reglas. Finanzas sin complicaciones
+        <section className="text-center space-y-6">
+          <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-900 leading-tight">
+            Tu dinero, tus reglas
           </h1>
-          <h2 className=" text-3xl text-blue-800 mb-3 font-medium">
-            Descubre soluciones financieras diseñadas para ti.
+          <h2 className="text-4xl font-bold text-blue-800 mb-4">
+            Finanzas sin complicaciones
           </h2>
-          <p className="text-xl text-blue-700 max-w-2xl mx-auto">
+          <p className="text-xl text-blue-700 max-w-3xl mx-auto leading-relaxed">
             Desde tarjetas de crédito flexibles hasta inversiones inteligentes,
-            todo en un solo lugar. ¡Manejar tu dinero nunca había sido tan
-            fácil!.
+            todo en un solo lugar. Manejar tu dinero nunca había sido tan fácil
+            y seguro.
           </p>
         </section>
 
-        <section className="grid md:grid-cols-4 gap-8">
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
-            <CreditCard className="mx-auto text-blue-600 mb-4" size={64} />
-            <h3 className="text-xl font-bold mb-2">Tarjetas de Crédito</h3>
-            <p className="text-gray-600">
-              Compra lo que quieras, cuando quieras. Sin preocupaciones.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
-            <DollarSign className="mx-auto text-green-600 mb-4" size={64} />
-            <h3 className="text-xl font-bold mb-2">
-              Préstamos Personales y Empresariales
-            </h3>
-            <p className="text-gray-600">
-              Haz crecer tus sueños con opciones de financiamiento accesibles.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
-            <Landmark className="mx-auto text-purple-600 mb-4" size={64} />
-            <h3 className="text-xl font-bold mb-2">
-              Inversiones Inteligentes{" "}
-            </h3>
-            <p className="text-gray-600">
-              Pon tu dinero a trabajar por ti. Estrategias que generan
-              resultados.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
-            <ShieldCheck className="mx-auto text-red-600 mb-4" size={64} />
-            <h3 className="text-xl font-bold mb-2">
-              Seguridad de Primer Nivel
-            </h3>
-            <p className="text-gray-600">
-              Tu dinero y datos siempre protegidos con la mejor tecnología.
-            </p>
-          </div>
+        {/* Features Grid */}
+        <section className="grid md:grid-cols-4 gap-8 mt-16">
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <div
+                key={index}
+                className="bg-white/80 rounded-2xl shadow-lg p-6 text-center 
+                           hover:shadow-2xl hover:scale-105 transition-all duration-300 
+                           group overflow-hidden relative"
+              >
+                <div className="absolute -top-10 -right-10 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <IconComponent
+                    size={120}
+                    className={`text-${feature.color}-600`}
+                  />
+                </div>
+                <IconComponent
+                  className={`mx-auto text-${feature.color}-600 mb-4 group-hover:scale-110 transition-transform`}
+                  size={64}
+                />
+                <h3 className="text-xl font-bold mb-3 text-blue-900">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            );
+          })}
         </section>
 
+        {/* Call to Action */}
         <div className="text-center mt-16">
           <Link
             to="/login"
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg text-xl hover:bg-blue-700 transition"
+            className="px-10 py-4 rounded-full text-xl font-bold 
+                       bg-gradient-to-r from-blue-600 to-blue-800 
+                       text-white shadow-lg hover:shadow-xl 
+                       transform hover:-translate-y-1 transition-all 
+                       inline-flex items-center group"
           >
             Comienza ahora
+            <ChevronRight
+              className="ml-2 group-hover:translate-x-1 transition-transform"
+              size={24}
+            />
           </Link>
         </div>
       </main>

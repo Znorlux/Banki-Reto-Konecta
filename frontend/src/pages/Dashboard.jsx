@@ -45,7 +45,7 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
       <div className="grid grid-cols-4 gap-6 mb-8">
         <Card className="bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg hover:scale-105 transition-transform duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
