@@ -69,9 +69,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-sky-100 flex items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md shadow-2xl border-none">
-        <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-t-2xl py-6 text-center">
+        <CardHeader className="bg-gradient-to-r from-indigo-600 to-sky-600 text-white rounded-t-2xl py-6 text-center">
           <div className="flex justify-center mb-4">
             <ShieldCheck className="h-12 w-12 text-white" strokeWidth={1.5} />
           </div>
