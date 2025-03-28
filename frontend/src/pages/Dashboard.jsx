@@ -8,7 +8,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, CreditCard, PieChart, Users, LogOut } from "lucide-react";
+import {
+  Briefcase,
+  CreditCard,
+  PieChart,
+  Users,
+  Edit,
+  Trash2,
+  Eye,
+  Plus,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const [products, setProducts] = useState([
@@ -35,92 +45,116 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
       <div className="grid grid-cols-4 gap-6 mb-8">
-        <Card className="bg-blue-600 text-white">
+        <Card className="bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg hover:scale-105 transition-transform duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Products
+            <CardTitle className="text-sm font-medium opacity-80">
+              Productos totales
             </CardTitle>
-            <Briefcase className="h-5 w-5 text-white" />
+            <Briefcase className="h-5 w-5 text-white/80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{products.length}</div>
+            <div className="text-3xl font-bold">{products.length}</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-green-600 text-white">
+        <Card className="bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg hover:scale-105 transition-transform duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Quota</CardTitle>
-            <CreditCard className="h-5 w-5 text-white" />
+            <CardTitle className="text-sm font-medium opacity-80">
+              Cuota total
+            </CardTitle>
+            <CreditCard className="h-5 w-5 text-white/80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-bold">
               ${totalQuota.toLocaleString()}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-purple-600 text-white">
+        <Card className="bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-lg hover:scale-105 transition-transform duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-5 w-5 text-white" />
+            <CardTitle className="text-sm font-medium opacity-80">
+              Usuarios totales
+            </CardTitle>
+            <Users className="h-5 w-5 text-white/80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-3xl font-bold">12</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-red-600 text-white">
+        <Card className="bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-lg hover:scale-105 transition-transform duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Products
+            <CardTitle className="text-sm font-medium opacity-80">
+              Productos activos
             </CardTitle>
-            <PieChart className="h-5 w-5 text-white" />
+            <PieChart className="h-5 w-5 text-white/80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-3xl font-bold">8</div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="bg-white shadow-lg rounded-lg">
-        <div className="p-6 bg-blue-50 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-blue-800">
-            Financial Products
+      <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
+        <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-500 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-white">
+            Productos financieros
           </h2>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-            + Add New Product
-          </button>
+          <Button
+            variant="outline"
+            className="bg-white/20 text-white hover:bg-white/30 border-white/30 flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            Añadir nuevo producto
+          </Button>
         </div>
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-blue-50">
             <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>Requested Quota</TableHead>
-              <TableHead>Creation Date</TableHead>
-              <TableHead>Created By</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-blue-800">Producto</TableHead>
+              <TableHead className="text-blue-800">Valor</TableHead>
+              <TableHead className="text-blue-800">Fecha de creación</TableHead>
+              <TableHead className="text-blue-800">Creado por</TableHead>
+              <TableHead className="text-blue-800">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.product}</TableCell>
-                <TableCell>${product.requestedQuota}</TableCell>
-                <TableCell>{product.creationDate}</TableCell>
-                <TableCell>{product.user}</TableCell>
+              <TableRow key={product.id} className="hover:bg-blue-50/50">
+                <TableCell className="font-medium">{product.product}</TableCell>
+                <TableCell className="text-green-600 font-semibold">
+                  ${product.requestedQuota}
+                </TableCell>
+                <TableCell className="text-gray-600">
+                  {product.creationDate}
+                </TableCell>
+                <TableCell className="text-gray-600">{product.user}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <button className="text-blue-500 hover:text-blue-700">
-                      View
-                    </button>
-                    <button className="text-green-500 hover:text-green-700">
-                      Edit
-                    </button>
-                    <button className="text-red-500 hover:text-red-700">
-                      Delete
-                    </button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-green-500 hover:text-green-700 hover:bg-green-100"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
