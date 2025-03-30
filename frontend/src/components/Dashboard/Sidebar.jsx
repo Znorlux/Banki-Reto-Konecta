@@ -39,19 +39,19 @@ const Sidebar = ({ isOpen, userRole, onClose }) => {
     },
     {
       name: "Usuarios",
-      path: "/usuarios",
+      path: "/users",
       icon: <Users className="h-5 w-5" />,
       showTo: ["Administrador"],
     },
     {
       name: "Radicar Venta",
-      path: "/ventas/nueva",
+      path: "/sales/new",
       icon: <FileText className="h-5 w-5" />,
       showTo: ["Administrador", "Asesor"],
     },
     {
       name: "Estadísticas",
-      path: "/estadisticas",
+      path: "/stats",
       icon: <BarChart4 className="h-5 w-5" />,
       showTo: ["Administrador", "Asesor"],
     },
