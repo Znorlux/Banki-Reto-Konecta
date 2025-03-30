@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
 import { Toaster } from "sonner";
+import RadicateSale from "./pages/RadicateSale";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/sales/new" element={<RadicateSale />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

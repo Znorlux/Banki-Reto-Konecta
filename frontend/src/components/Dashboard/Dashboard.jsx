@@ -61,7 +61,7 @@ const Dashboard = () => {
 
   // Manejadores de eventos para la tabla
   const handleAddProduct = () => {
-    navigate("/ventas/nueva");
+    navigate("/sales/new");
   };
 
   const handleViewProduct = (id) => {
