@@ -3,15 +3,19 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "sonner";
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <Toaster position="bottom-right" richColors />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   );
 };
 
