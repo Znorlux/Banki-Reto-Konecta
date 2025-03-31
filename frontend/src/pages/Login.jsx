@@ -9,12 +9,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 
-// URL base de la API (se puede mover a un archivo de configuración)
 const API_URL = "http://localhost:5000/api";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [captcha, setCaptcha] = useState("");
@@ -22,6 +23,13 @@ const Login = () => {
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentCaptcha, setCurrentCaptcha] = useState("");
+
+  // Redireccionar si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   // Cargar el captcha al iniciar
   useEffect(() => {
@@ -86,55 +94,25 @@ const Login = () => {
     }
 
     try {
-      // Llamada real a la API para autenticación
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      // Usar la función login del AuthContext
+      const result = await login({
         email,
         password,
         captcha,
       });
 
-      // Si la autenticación es exitosa
-      if (response.data.success && response.data.token) {
-        // Guardar token y datos de usuario
-        localStorage.setItem("userToken", response.data.token);
-        localStorage.setItem("userName", response.data.user.name);
-        localStorage.setItem("userRole", response.data.user.role);
-        localStorage.setItem("userId", response.data.user.id.toString());
-
-        // Configurar axios para usar el token en futuras solicitudes
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.token}`;
-
-        // Mostrar mensaje de éxito
-        toast.success("Inicio de sesión exitoso", {
-          description: `Bienvenido, ${response.data.user.name}`,
-        });
-
-        // Redirigir al dashboard
-        navigate("/dashboard", {
-          state: {
-            animate: true,
-            role: response.data.user.role,
-          },
-        });
+      if (result.success) {
+        // La redirección se maneja en el useEffect que observa isAuthenticated
+        console.log("Login exitoso, redirigiendo...");
       } else {
         setLoginError(
-          "Error en la respuesta del servidor. Intente nuevamente."
+          result.error || "Error al iniciar sesión. Intente nuevamente."
         );
+        fetchCaptcha();
       }
     } catch (error) {
       console.error("Error en login:", error);
-      if (error.response && error.response.data) {
-        setLoginError(
-          error.response.data.message ||
-            "Error al iniciar sesión. Intenta nuevamente."
-        );
-      } else {
-        setLoginError("Error de conexión. Verifica tu conexión a internet.");
-      }
-
-      // Generar nuevo captcha en caso de error
+      setLoginError("Error inesperado. Por favor intente nuevamente.");
       fetchCaptcha();
     } finally {
       setIsLoading(false);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Briefcase,
@@ -12,10 +12,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
-const Sidebar = ({ isOpen, userRole, onClose }) => {
+const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
+
+  // Obtener el rol del usuario del contexto de autenticación
+  const userRole = user?.role || "ASESOR";
+
+  // Convertir rol a formato de visualización (primera letra mayúscula, resto minúscula)
+  const displayRole = userRole === "ADMINISTRADOR" ? "Administrador" : "Asesor";
 
   // Function to check if a path is active
   const isActive = (path) => {
@@ -23,37 +31,35 @@ const Sidebar = ({ isOpen, userRole, onClose }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userToken");
-    navigate("/login");
+    // Usar la función logout del AuthContext
+    logout();
   };
 
-  // Menu items
+  // Menu items - Adaptados a las rutas correctas
   const menuItems = [
     {
       name: "Dashboard",
       path: "/dashboard",
       icon: <Briefcase className="h-5 w-5" />,
-      showTo: ["Administrador", "Asesor"],
+      showTo: ["ADMINISTRADOR", "ASESOR"],
     },
     {
       name: "Usuarios",
       path: "/users",
       icon: <Users className="h-5 w-5" />,
-      showTo: ["Administrador"],
+      showTo: ["ADMINISTRADOR"],
     },
     {
       name: "Radicar Venta",
       path: "/sales/new",
       icon: <FileText className="h-5 w-5" />,
-      showTo: ["Administrador", "Asesor"],
+      showTo: ["ADMINISTRADOR", "ASESOR"],
     },
     {
       name: "Estadísticas",
       path: "/stats",
       icon: <BarChart4 className="h-5 w-5" />,
-      showTo: ["Administrador", "Asesor"],
+      showTo: ["ADMINISTRADOR", "ASESOR"],
     },
   ];
 
@@ -96,10 +102,10 @@ const Sidebar = ({ isOpen, userRole, onClose }) => {
             </div>
             <div>
               <p className="font-medium text-gray-800 leading-tight">
-                {localStorage.getItem("userName") || "Admin User"}
+                {user?.name || "Usuario"}
               </p>
               <p className="text-xs text-blue-600 font-medium mt-0.5">
-                {userRole}
+                {displayRole}
               </p>
             </div>
           </div>
