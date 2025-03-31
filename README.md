@@ -94,11 +94,12 @@ La aplicación está completamente dockerizada para facilitar su despliegue. Sig
 2. **Configura el archivo `.env`** en la carpeta `/backend` como se describe arriba.
 
 3. **Ejecuta con Docker Compose**:
+   **No olvide iniciar Docker Desktop en su computador**
    ```bash
    docker-compose up -d
    ```
 
-4. **Accede a la aplicación**:
+5. **Accede a la aplicación**:
    - Frontend: http://localhost
    - API Backend: http://localhost:5000
 
