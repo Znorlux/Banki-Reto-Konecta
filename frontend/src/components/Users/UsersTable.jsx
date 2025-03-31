@@ -77,8 +77,8 @@ const UsersTable = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos los roles</SelectItem>
-                <SelectItem value="Administrador">Administrador</SelectItem>
-                <SelectItem value="Asesor">Asesor</SelectItem>
+                <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
+                <SelectItem value="ASESOR">Asesor</SelectItem>
               </SelectContent>
             </Select>
           </div>
