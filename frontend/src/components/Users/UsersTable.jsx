@@ -127,10 +127,10 @@ const UsersTable = ({
                       </Badge>
                     </TableCell>
                     <TableCell className="text-gray-600 text-sm">
-                      {user.creationDate}
+                      {user.createdAt.split("T")[0]}
                     </TableCell>
                     <TableCell className="text-gray-600 text-sm">
-                      {user.updateDate}
+                      {user.updatedAt.split("T")[0]}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center space-x-1">
