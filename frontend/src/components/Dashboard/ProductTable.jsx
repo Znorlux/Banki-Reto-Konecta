@@ -28,6 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import ProductDetailModal from "./Products/ProductDetailModal";
+import ProductEditModal from "./Products/ProductEditModal";
 
 // URL base de la API
 const API_URL = "http://localhost:5000/api";
@@ -48,6 +49,7 @@ const ProductTable = ({ onProductsLoaded }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   // Cargar productos al montar el componente
   useEffect(() => {
@@ -104,6 +106,11 @@ const ProductTable = ({ onProductsLoaded }) => {
   const handleViewClick = (productId) => {
     setSelectedProductId(productId);
     setDetailModalOpen(true);
+  };
+
+  const handleEditClick = (productId) => {
+    setSelectedProductId(productId);
+    setEditModalOpen(true);
   };
 
   // Función para eliminar producto
@@ -313,9 +320,7 @@ const ProductTable = ({ onProductsLoaded }) => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() =>
-                              navigate(`/ventas/editar/${product.id}`)
-                            }
+                            onClick={() => handleEditClick(product.id)}
                             className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-full"
                           >
                             <Edit className="h-4 w-4" />
@@ -387,6 +392,11 @@ const ProductTable = ({ onProductsLoaded }) => {
         productId={selectedProductId}
         open={detailModalOpen}
         onOpenChange={setDetailModalOpen}
+      />
+      <ProductEditModal
+        productId={selectedProductId}
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
       />
     </>
   );
