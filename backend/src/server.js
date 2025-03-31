@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 // Importar rutas
+const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 
 // Inicializar app
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 // Ruta para verificar que el servidor está funcionando

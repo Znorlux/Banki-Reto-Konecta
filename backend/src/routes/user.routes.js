@@ -1,7 +1,14 @@
 const express = require("express");
 const userController = require("../controllers/user.controller");
+const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
+
+// Proteger todas las rutas de usuarios (requieren autenticación)
+router.use(authMiddleware.protect);
+
+// Las operaciones de usuarios solo pueden ser realizadas por administradores, tal y como se nos pidió en el doc
+router.use(authMiddleware.restrictTo("ADMINISTRADOR"));
 
 // OBTENER TODOS LOS USUARIOS
 router.get("/", userController.getAllUsers);
