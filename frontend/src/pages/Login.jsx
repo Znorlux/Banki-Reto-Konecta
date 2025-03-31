@@ -53,7 +53,7 @@ const Login = () => {
     }
   };
 
-  // Función de respaldo para generar captcha localmente
+  // Función de respaldo para generar captcha localmente (por si el servidor falla)
   const generateLocalCaptcha = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   };

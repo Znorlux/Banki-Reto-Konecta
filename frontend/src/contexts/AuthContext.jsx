@@ -3,17 +3,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-// URL base de la API
 const API_URL = "http://localhost:5000/api";
 
-// Crear contexto de autenticación
 const AuthContext = createContext();
 
-// Hook personalizado para usar el contexto
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
 
-// Proveedor del contexto
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -29,13 +25,12 @@ export const AuthProvider = ({ children }) => {
           // Configurar axios
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-          // Obtener información del usuario
+          // Obtener información del usuario en nuestro endpoint
           const response = await axios.get(`${API_URL}/auth/me`);
 
           if (response.data.success && response.data.data) {
             setUser(response.data.data);
           } else {
-            // Limpiar datos si la respuesta no es exitosa
             handleLogout(false);
           }
         } catch (error) {
@@ -55,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     verifyAuth();
   }, [token]);
 
-  // Función de login
+  // lllamada al login
   const login = async (credentials) => {
     try {
       setLoading(true);
@@ -69,16 +64,16 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("userRole", response.data.user.role);
         localStorage.setItem("userId", response.data.user.id.toString());
 
-        // Actualizar estado
+        // actualiazamos nuestros states
         setToken(response.data.token);
         setUser(response.data.user);
 
-        // Configurar axios
+        // Configurar axios para que use el token en las siguientes peticiones
         axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${response.data.token}`;
 
-        // Notificar éxito
+        // notificar todo bien
         toast.success("Inicio de sesión exitoso");
 
         return { success: true, user: response.data.user };
@@ -120,7 +115,6 @@ export const AuthProvider = ({ children }) => {
     // Limpiar headers de axios
     delete axios.defaults.headers.common["Authorization"];
 
-    // Notificar si es requerido
     if (showMessage) {
       toast.info("Sesión cerrada correctamente");
       // Redirigir al login
@@ -144,6 +138,8 @@ export const AuthProvider = ({ children }) => {
     hasRole,
     initialized,
   };
+  // Al final tendremos disponibles todas las funciones y variables que queramos en el contexto
+  // y que podremos usar en cualquier componente de la app
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

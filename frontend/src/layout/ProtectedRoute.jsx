@@ -4,13 +4,12 @@ import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Componente para proteger rutas que requieren autenticación
- * @param {Object} props - Props del componente
- * @param {Array} props.allowedRoles - Roles permitidos para acceder a la ruta
+ * @param {Array} props.allowedRoles - Roles permitidos para acceder a la ruta, podriamos poner más roles
  */
 const ProtectedRoute = ({ allowedRoles = [] }) => {
   const { isAuthenticated, user, loading, initialized } = useAuth();
 
-  // Mientras verificamos la autenticación, mostramos nada
+  // Mientras verificamos la autenticación, mostramos un loader
   if (loading || !initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
