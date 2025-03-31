@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +14,64 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(50)
+  email         String   @unique @db.VarChar(50)
+  password      String   @db.VarChar(255)
+  role          Role     @default(ASESOR)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relaciones
+  createdProducts Product[] @relation("CreatedBy")
+  updatedProducts Product[] @relation("UpdatedBy")
+
+  @@map("users")
+}
+
+model Product {
+  id             Int       @id @default(autoincrement())
+  productType    ProductType
+  requestedQuota Int
+  franchise      Franchise? // opcional - solo para tarjetas de credito
+  rate           Float?    // opcional - solo para creditos y libranzas
+  status         ProductStatus @default(ABIERTO)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  
+  // Relaciones - IDs
+  createdById    Int       @map("created_by_id")
+  updatedById    Int       @map("updated_by_id")
+  
+  // Relaciones - Referencias
+  createdBy      User      @relation("CreatedBy", fields: [createdById], references: [id])
+  updatedBy      User      @relation("UpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("products")
+}
+
+enum Role {
+  ADMINISTRADOR
+  ASESOR
+}
+
+enum ProductType {
+  CREDITO_DE_CONSUMO       @map("Credito de Consumo")
+  LIBRANZA_LIBRE_INVERSION @map("Libranza Libre Inversión")
+  TARJETA_DE_CREDITO       @map("Tarjeta de Credito")
+}
+
+enum Franchise {
+  AMEX
+  VISA
+  MASTERCARD
+}
+
+enum ProductStatus {
+  ABIERTO
+  EN_PROCESO
+  FINALIZADO
 }
