@@ -94,11 +94,12 @@ La aplicación está completamente dockerizada para facilitar su despliegue. Sig
 2. **Configura el archivo `.env`** en la carpeta `/backend` como se describe arriba.
 
 3. **Ejecuta con Docker Compose**:
+   **No olvide iniciar Docker Desktop en su computador**
    ```bash
    docker-compose up -d
    ```
 
-4. **Accede a la aplicación**:
+5. **Accede a la aplicación**:
    - Frontend: http://localhost
    - API Backend: http://localhost:5000
 
@@ -138,4 +139,3 @@ docker-compose down
 
 - La aplicación está configurada para usar PostgreSQL a través de Supabase, pero puede adaptarse fácilmente a otras bases de datos relacionales modificando las variables de entorno.
 - Los contenedores Docker están optimizados para entornos de desarrollo y producción.
-- La interfaz de usuario es completamente responsive y se adapta a dispositivos móviles y de escritorio.
