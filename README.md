@@ -48,7 +48,7 @@ El proyecto está organizado en dos carpetas principales:
 ### Frontend
 - React 19
 - React Router v7
-- React Hook Form con Zod para validaciones
+- React Hook Form
 - Tailwind CSS con componentes UI personalizados
 - Shadcn libreria de componentes UI
 - Axios para comunicación con API
