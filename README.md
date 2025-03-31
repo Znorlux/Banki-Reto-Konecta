@@ -2,6 +2,8 @@
 
 Banki Finanzas es una aplicación web completa para la gestión y venta de productos financieros, desarrollada como parte de un reto técnico. La aplicación permite a los asesores radicar ventas de diferentes productos financieros y a los administradores gestionar tanto usuarios como las ventas realizadas.
 
+> 👉 [Ver credenciales de prueba](#credenciales-de-prueba) para acceder al sistema
+
 ## Características principales
 
 - **Sistema de autenticación seguro** con JWT y validación de captcha
