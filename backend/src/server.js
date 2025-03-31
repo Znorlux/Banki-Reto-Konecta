@@ -1,12 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-//const morgan = require("morgan");
 require("dotenv").config();
 
 // Importar rutas
-//const authRoutes = require("./routes/auth.routes");
-//const userRoutes = require("./routes/user.routes");
-//const productRoutes = require("./routes/product.routes");
+const userRoutes = require("./routes/user.routes");
 
 // Inicializar app
 const app = express();
@@ -14,12 +11,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-//app.use(morgan("dev"));
 
 // Rutas
-//app.use("/api/auth", authRoutes);
-//app.use("/api/users", userRoutes);
-//app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 // Ruta para verificar que el servidor está funcionando
 app.get("/", (req, res) => {
@@ -27,7 +21,7 @@ app.get("/", (req, res) => {
 });
 
 // Middleware para manejo de errores
-/*app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     success: false,
@@ -35,7 +29,7 @@ app.get("/", (req, res) => {
     error: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 });
-*/
+
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
