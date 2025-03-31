@@ -36,8 +36,8 @@ model Product {
   id             Int       @id @default(autoincrement())
   productType    ProductType
   requestedQuota Int
-  franchise      Franchise? // opcional - solo para tarjetas de credito
-  rate           Float?    // opcional - solo para creditos y libranzas
+  franchise      Franchise? // opcional - obligatorio para tarjetas de credito
+  rate           Float?    // opcional - obligatorio para creditos y libranzas
   status         ProductStatus @default(ABIERTO)
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
