@@ -37,8 +37,8 @@ El proyecto está organizado en dos carpetas principales:
     ├── /src            # Código fuente del backend
     │   ├── /controllers # Controladores
     │   ├── /routes     # Definición de rutas API
-    │   ├── /middlewares # Middlewares (auth, validación)
-    │   └── /services   # Servicios y lógica de negocio
+    │   ├── /middleware # Middlewares (auth)
+    │   └── /lib        # Modulos reutilizables (ej: instancia de prisma)
     ├── /prisma         # Configuración de ORM y modelos
     ├── package.json    # Dependencias del backend
     ├── .env            # Variables de entorno (requerido)
@@ -128,14 +128,17 @@ docker-compose down
 ## Características implementadas
 
 - ✅ Sistema de login con JWT y captcha
-- ✅ CRUD completo de usuarios (solo administradores)
+- ✅ CRUD completo de usuarios (solo administradores) + filtros de busqueda
 - ✅ CRUD completo de productos financieros
 - ✅ Visualización condicional basada en roles
 - ✅ Campos dinámicos según tipo de producto
 - ✅ Validaciones en frontend y backend
-- ✅ Dockerización completa
+- ✅ Dockerización completa y facil de ejecutar (abierto a optimizaciones de las imagenes)
 - ✅ Interfaz de usuario moderna con componentes UI personalizados
 - ✅ Visualización de sumatoria de cupos solicitados
+- ✅ Modulo de backOffice (en **modales de vista de producto**) + modificación de estado de los productos
+- ✅ Encriptación + salteo con bcrypt de las contraseñas de los usuarios para mayor seguridad
+- ✅ Principios SOLID en la mayoría de lo posible
 
 ## Notas adicionales
 
