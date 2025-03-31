@@ -3,58 +3,105 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import SaleFormHeader from "@/components/Sales/SaleFormHeader";
 import SaleForm from "@/components/Sales/SaleForm";
 import SaleSummary from "@/components/Sales/SaleSummary";
 
+// URL base de la API
+const API_URL = "http://localhost:5000/api";
+
 /**
- * Componente para la página de radicación de ventas
+ * Componente para la página de radicación de ventas - Conectado a API real
  */
 const RadicateSale = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
-  // Obtener información del usuario actual desde localStorage
-  const currentUser = {
-    id: 1, // En un escenario real, esto vendría del token JWT decodificado
-    name: localStorage.getItem("userName") || "Usuario",
-    role: localStorage.getItem("userRole") || "Asesor",
-  };
+  const { user } = useAuth();
 
   // Manejar envío del formulario
-  const handleSubmitSale = (formData) => {
-    setLoading(true);
+  const handleSubmitSale = async (formData) => {
+    try {
+      setLoading(true);
 
-    // Simular llamada a API con un retraso
-    setTimeout(() => {
-      // Preparar datos para enviar al backend
-      const now = new Date().toISOString().replace("T", " ").substring(0, 19);
-      const saleData = {
-        ...formData,
-        id: Math.floor(Math.random() * 10000) + 1, // Simulación de ID autoincrementable
-        creationDate: now,
-        updateDate: now,
-        createdBy: currentUser.id,
-        updatedBy: currentUser.id,
+      // Transformar el tipo de producto al formato que espera el backend
+      let productType;
+      switch (formData.product) {
+        case "Credito de Consumo":
+          productType = "CREDITO_DE_CONSUMO";
+          break;
+        case "Libranza Libre Inversión":
+          productType = "LIBRANZA_LIBRE_INVERSION";
+          break;
+        case "Tarjeta de Credito":
+          productType = "TARJETA_DE_CREDITO";
+          break;
+        default:
+          productType = formData.product;
+      }
+
+      // Preparar datos para la API
+      const productData = {
+        productType,
+        requestedQuota: parseInt(formData.requestedQuota.replace(/\D/g, "")), // Convertir a número
+        franchise: formData.franchise || undefined, // Solo para tarjetas de crédito
+        rate: formData.rate ? parseFloat(formData.rate) : undefined, // Solo para créditos
       };
 
-      // Lógica para guardar en el backend (simulado)
-      console.log("Datos de venta a enviar:", saleData);
+      console.log("Enviando datos a la API:", productData);
 
-      // Mostrar mensaje de éxito
-      toast.success("Venta radicada con éxito", {
-        description: "Redirigiendo al dashboard...",
+      // Obtener token JWT
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        throw new Error("No hay token de autenticación");
+      }
+
+      // Enviar datos al backend
+      const response = await axios.post(`${API_URL}/products`, productData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
-      // Redireccionar al dashboard después de un breve retraso
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
+      if (response.data.success) {
+        toast.success("Venta radicada con éxito", {
+          description: "Redirigiendo al dashboard...",
+        });
 
+        // Redireccionar al dashboard después de un breve retraso
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+      } else {
+        throw new Error(response.data.message || "Error al radicar venta");
+      }
+    } catch (error) {
+      console.error("Error al radicar venta:", error);
+
+      let errorMessage = "Error al radicar venta. Intente nuevamente.";
+
+      if (error.response && error.response.data) {
+        errorMessage = error.response.data.message || errorMessage;
+
+        // Si hay errores de validación específicos
+        if (
+          error.response.data.errors &&
+          error.response.data.errors.length > 0
+        ) {
+          errorMessage = error.response.data.errors
+            .map((err) => err.msg)
+            .join(", ");
+        }
+      }
+
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -64,7 +111,7 @@ const RadicateSale = () => {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full mt-1"
+          className="rounded-full mt-1 cursor-pointer"
           onClick={() => navigate("/dashboard")}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -92,7 +139,13 @@ const RadicateSale = () => {
           <SaleForm
             onSubmit={handleSubmitSale}
             loading={loading}
-            currentUser={currentUser}
+            currentUser={
+              user || {
+                id: 0,
+                name: "Usuario",
+                role: "ASESOR",
+              }
+            }
           />
         </div>
 

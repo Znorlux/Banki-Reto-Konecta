@@ -20,11 +20,7 @@ import {
 
 /**
  * Componente para el formulario de radicación de ventas
- *
- * @param {Object} props - Propiedades del componente
- * @param {Function} props.onSubmit - Función para manejar el envío del formulario
- * @param {boolean} props.loading - Estado de carga del formulario
- * @param {Object} props.currentUser - Información del usuario actual
+ * Adaptado para conectar con la API
  */
 const SaleForm = ({ onSubmit, loading, currentUser }) => {
   // Estado del formulario
@@ -162,24 +158,8 @@ const SaleForm = ({ onSubmit, loading, currentUser }) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Convertir el cupo solicitado a un número para el backend
-      const numericQuota = parseInt(
-        formData.requestedQuota.replace(/\D/g, ""),
-        10
-      );
-
-      // Procesar la tasa si existe
-      const numericRate = formData.rate ? parseFloat(formData.rate) : null;
-
-      // Preparar datos para enviar
-      const processedData = {
-        ...formData,
-        requestedQuota: numericQuota,
-        rate: numericRate,
-      };
-
-      // Enviar al componente padre
-      onSubmit(processedData);
+      // Enviar datos al componente padre
+      onSubmit(formData);
     }
   };
 
