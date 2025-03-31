@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, User, RefreshCw, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import axios from "axios";
+
+// URL base de la API (se puede mover a un archivo de configuración)
+const API_URL = "http://localhost:5000/api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,13 +21,36 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentCaptcha, setCurrentCaptcha] = useState("");
 
-  const generateCaptcha = () => {
+  // Cargar el captcha al iniciar
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
+
+  // Función para obtener captcha del servidor
+  const fetchCaptcha = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/auth/captcha`);
+      if (response.data.success && response.data.captcha) {
+        setCurrentCaptcha(response.data.captcha);
+      } else {
+        // Fallback a generación local si hay un error
+        setCurrentCaptcha(generateLocalCaptcha());
+      }
+    } catch (error) {
+      console.error("Error al obtener captcha:", error);
+      // Fallback a generación local si hay un error
+      setCurrentCaptcha(generateLocalCaptcha());
+    }
+  };
+
+  // Función de respaldo para generar captcha localmente
+  const generateLocalCaptcha = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   };
 
-  const [currentCaptcha, setCurrentCaptcha] = useState(generateCaptcha());
-
+  // Funciones de validación
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password) =>
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(password);
@@ -32,6 +60,7 @@ const Login = () => {
     setLoginError("");
     setIsLoading(true);
 
+    // Validar formulario
     const newErrors = {};
 
     if (!email) newErrors.email = "El correo electrónico es obligatorio";
@@ -44,8 +73,11 @@ const Login = () => {
         "La contraseña debe tener 8 caracteres, una mayúscula y un número";
 
     if (!captcha) newErrors.captcha = "El captcha es obligatorio";
-    else if (captcha.toUpperCase() !== currentCaptcha)
+
+    // Verificación del captcha (esta validación se hará también en el backend)
+    if (captcha.toUpperCase() !== currentCaptcha) {
       newErrors.captcha = "Captcha incorrecto";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -54,39 +86,63 @@ const Login = () => {
     }
 
     try {
-      // Aquí iría la lógica de autenticación con el backend
-      // Por ahora simulamos un delay y success
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // Simulación de la respuesta del servidor
-      const userData = {
-        id: 1,
-        name: "Admin User",
-        email: email,
-        role: "Administrador", // o "Asesor" para probar ambos roles
-      };
-
-      // Guardar datos en localStorage (simulando JWT)
-      localStorage.setItem("userRole", userData.role);
-      localStorage.setItem("userName", userData.name);
-      localStorage.setItem("userToken", "fake-jwt-token");
-
-      // Redirigir al dashboard con animación
-      navigate("/dashboard", {
-        state: {
-          animate: true,
-          role: userData.role,
-        },
+      // Llamada real a la API para autenticación
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+        captcha,
       });
+
+      // Si la autenticación es exitosa
+      if (response.data.success && response.data.token) {
+        // Guardar token y datos de usuario
+        localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("userName", response.data.user.name);
+        localStorage.setItem("userRole", response.data.user.role);
+        localStorage.setItem("userId", response.data.user.id.toString());
+
+        // Configurar axios para usar el token en futuras solicitudes
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.token}`;
+
+        // Mostrar mensaje de éxito
+        toast.success("Inicio de sesión exitoso", {
+          description: `Bienvenido, ${response.data.user.name}`,
+        });
+
+        // Redirigir al dashboard
+        navigate("/dashboard", {
+          state: {
+            animate: true,
+            role: response.data.user.role,
+          },
+        });
+      } else {
+        setLoginError(
+          "Error en la respuesta del servidor. Intente nuevamente."
+        );
+      }
     } catch (error) {
-      setLoginError("Error al iniciar sesión. Intenta nuevamente.");
+      console.error("Error en login:", error);
+      if (error.response && error.response.data) {
+        setLoginError(
+          error.response.data.message ||
+            "Error al iniciar sesión. Intenta nuevamente."
+        );
+      } else {
+        setLoginError("Error de conexión. Verifica tu conexión a internet.");
+      }
+
+      // Generar nuevo captcha en caso de error
+      fetchCaptcha();
     } finally {
       setIsLoading(false);
     }
   };
 
   const refreshCaptcha = () => {
-    setCurrentCaptcha(generateCaptcha());
+    fetchCaptcha();
     setCaptcha("");
     setErrors((prev) => ({ ...prev, captcha: undefined }));
   };

@@ -88,12 +88,8 @@ class AuthController {
    */
   generateCaptcha(req, res) {
     try {
-      // Generar un captcha simple (6 caracteres alfanuméricos)
-      const captcha = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-      // En una implementación real, guardaríamos esto en una sesión o redis
-      // Por ahora, para pruebas, solo lo devolvemos
-
+      // generacion sencillita del captcha -
+      const captcha = Math.random().toString(36).substring(2, 8).toUpperCase(); // captcha aleatorio de 6 caracteres
       return res.status(200).json({
         success: true,
         captcha,

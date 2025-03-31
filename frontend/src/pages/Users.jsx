@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import axios from "axios";
 
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import UsersHeader from "@/components/Users/UsersHeader";
@@ -9,57 +9,59 @@ import UserCreateDialog from "@/components/Users/UserCreateDialog";
 import UserEditDialog from "@/components/Users/UserEditDialog";
 import UserDeleteDialog from "@/components/Users/UserDeleteDialog";
 
-// Datos iniciales para demostración (en un escenario real vendrían del backend)
-const initialUsers = [
-  {
-    id: 1,
-    name: "Admin User",
-    email: "admin@banki.com",
-    role: "Administrador",
-    creationDate: "2024-03-20 09:30:00",
-    updateDate: "2024-03-20 09:30:00",
-  },
-  {
-    id: 2,
-    name: "Juan Pérez",
-    email: "juan@banki.com",
-    role: "Asesor",
-    creationDate: "2024-03-21 10:15:00",
-    updateDate: "2024-03-21 10:15:00",
-  },
-  {
-    id: 3,
-    name: "María González",
-    email: "maria@banki.com",
-    role: "Asesor",
-    creationDate: "2024-03-22 11:45:00",
-    updateDate: "2024-03-22 11:45:00",
-  },
-  {
-    id: 4,
-    name: "Carlos Rodríguez",
-    email: "carlos@banki.com",
-    role: "Asesor",
-    creationDate: "2024-03-23 15:20:00",
-    updateDate: "2024-03-25 09:10:00",
-  },
-];
+// URL base de la API
+const API_URL = "http://localhost:5000/api";
 
 const Users = () => {
-  const navigate = useNavigate();
-
   // Estados
-  const [users, setUsers] = useState(initialUsers);
-  const [filteredUsers, setFilteredUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Cargar usuarios desde la API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("userToken");
+
+        const response = await axios.get(`${API_URL}/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.success) {
+          setUsers(response.data.data);
+          setFilteredUsers(response.data.data);
+        } else {
+          throw new Error("Error al cargar usuarios");
+        }
+      } catch (error) {
+        console.error("Error al cargar usuarios:", error);
+        setError("No se pudieron cargar los usuarios. Intente nuevamente.");
+        toast.error("Error al cargar usuarios");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   // Efecto para aplicar filtros
   useEffect(() => {
+    if (users.length === 0) return;
+
     let result = users;
 
     // Aplicar filtro de búsqueda
@@ -79,15 +81,6 @@ const Users = () => {
     setFilteredUsers(result);
   }, [users, searchTerm, roleFilter]);
 
-  // Verificar permisos de administrador
-  useEffect(() => {
-    const userRole = localStorage.getItem("userRole");
-    if (userRole !== "Administrador") {
-      navigate("/dashboard");
-      toast.error("No tienes permiso para acceder a esta página");
-    }
-  }, [navigate]);
-
   // Manejadores de eventos
   const handleSearchChange = (value) => {
     setSearchTerm(value);
@@ -97,54 +90,145 @@ const Users = () => {
     setRoleFilter(value);
   };
 
-  const handleCreateUser = (userData) => {
-    // Generar ID y fechas
-    const now = new Date().toISOString().replace("T", " ").substring(0, 19);
-    const newUser = {
-      id: Math.max(...users.map((u) => u.id), 0) + 1,
-      ...userData,
-      creationDate: now,
-      updateDate: now,
-    };
+  const handleCreateUser = async (userData) => {
+    try {
+      setLoading(true);
 
-    setUsers([...users, newUser]);
-    toast.success("Usuario creado con éxito");
-    setIsCreateDialogOpen(false);
-  };
+      const token = localStorage.getItem("userToken");
 
-  const handleUpdateUser = (userData) => {
-    // Actualizar usuario
-    const now = new Date().toISOString().replace("T", " ").substring(0, 19);
-    const updatedUsers = users.map((user) => {
-      if (user.id === currentUser.id) {
-        return {
-          ...user,
-          ...userData,
-          updateDate: now,
-        };
+      const response = await axios.post(`${API_URL}/users`, userData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        // Actualizar lista de usuarios
+        setUsers([...users, response.data.data]);
+        toast.success("Usuario creado con éxito");
+      } else {
+        throw new Error("Error al crear usuario");
       }
-      return user;
-    });
+    } catch (error) {
+      console.error("Error al crear usuario:", error);
+      let errorMessage = "Error al crear usuario";
 
-    setUsers(updatedUsers);
-    toast.success("Usuario actualizado con éxito");
-    setIsEditDialogOpen(false);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        errorMessage = error.response.data.message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+      setIsCreateDialogOpen(false);
+    }
   };
 
-  const handleDeleteUser = () => {
-    // Verificar que no se elimine el último administrador
-    const adminCount = users.filter((u) => u.role === "Administrador").length;
-    if (currentUser.role === "Administrador" && adminCount <= 1) {
-      toast.error("No se puede eliminar el último administrador del sistema");
-      setIsDeleteDialogOpen(false);
-      return;
-    }
+  const handleUpdateUser = async (userData) => {
+    try {
+      if (!currentUser) return;
 
-    // Eliminar usuario
-    const updatedUsers = users.filter((user) => user.id !== currentUser.id);
-    setUsers(updatedUsers);
-    toast.success("Usuario eliminado con éxito");
-    setIsDeleteDialogOpen(false);
+      setLoading(true);
+
+      const token = localStorage.getItem("userToken");
+
+      const response = await axios.put(
+        `${API_URL}/users/${currentUser.id}`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        // Actualizar usuario en la lista
+        const updatedUsers = users.map((user) => {
+          if (user.id === currentUser.id) {
+            return response.data.data;
+          }
+          return user;
+        });
+
+        setUsers(updatedUsers);
+        toast.success("Usuario actualizado con éxito");
+      } else {
+        throw new Error("Error al actualizar usuario");
+      }
+    } catch (error) {
+      console.error("Error al actualizar usuario:", error);
+      let errorMessage = "Error al actualizar usuario";
+
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        errorMessage = error.response.data.message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+      setIsEditDialogOpen(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      if (!currentUser) return;
+
+      // Verificar que no se elimine el último administrador
+      const adminCount = users.filter((u) => u.role === "ADMINISTRADOR").length;
+      if (currentUser.role === "ADMINISTRADOR" && adminCount <= 1) {
+        toast.error("No se puede eliminar el último administrador del sistema");
+        setIsDeleteDialogOpen(false);
+        return;
+      }
+
+      setLoading(true);
+
+      const token = localStorage.getItem("userToken");
+
+      const response = await axios.delete(
+        `${API_URL}/users/${currentUser.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        // Eliminar usuario de la lista
+        const updatedUsers = users.filter((user) => user.id !== currentUser.id);
+        setUsers(updatedUsers);
+        toast.success("Usuario eliminado con éxito");
+      } else {
+        throw new Error("Error al eliminar usuario");
+      }
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      let errorMessage = "Error al eliminar usuario";
+
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        errorMessage = error.response.data.message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+      setIsDeleteDialogOpen(false);
+    }
   };
 
   const openCreateDialog = () => {
@@ -164,8 +248,8 @@ const Users = () => {
   // Stats para el encabezado
   const userStats = {
     total: users.length,
-    admins: users.filter((u) => u.role === "Administrador").length,
-    advisors: users.filter((u) => u.role === "Asesor").length,
+    admins: users.filter((u) => u.role === "ADMINISTRADOR").length,
+    advisors: users.filter((u) => u.role === "ASESOR").length,
   };
 
   return (
@@ -183,18 +267,35 @@ const Users = () => {
       <UsersHeader stats={userStats} onCreateClick={openCreateDialog} />
 
       {/* Tabla de usuarios con filtros */}
-      <UsersTable
-        users={filteredUsers}
-        onSearchChange={handleSearchChange}
-        onRoleFilterChange={handleRoleFilterChange}
-        roleFilter={roleFilter}
-        onView={(user) => {
-          toast.info(`Visualizando a ${user.name}`);
-        }}
-        onEdit={openEditDialog}
-        onDelete={openDeleteDialog}
-        adminCount={users.filter((u) => u.role === "Administrador").length}
-      />
+      {loading && users.length === 0 ? (
+        <div className="bg-white p-8 rounded-lg shadow flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          <span className="ml-3 text-gray-600">Cargando usuarios...</span>
+        </div>
+      ) : error ? (
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <p className="text-red-500">{error}</p>
+          <button
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </button>
+        </div>
+      ) : (
+        <UsersTable
+          users={filteredUsers}
+          onSearchChange={handleSearchChange}
+          onRoleFilterChange={handleRoleFilterChange}
+          roleFilter={roleFilter}
+          onView={(user) => {
+            toast.info(`Visualizando a ${user.name}`);
+          }}
+          onEdit={openEditDialog}
+          onDelete={openDeleteDialog}
+          adminCount={users.filter((u) => u.role === "ADMINISTRADOR").length}
+        />
+      )}
 
       {/* Diálogos para CRUD */}
       <UserCreateDialog

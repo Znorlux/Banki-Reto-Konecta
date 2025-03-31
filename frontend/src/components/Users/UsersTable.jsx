@@ -115,10 +115,10 @@ const UsersTable = ({
                     <TableCell>
                       <Badge
                         variant={
-                          user.role === "Administrador" ? "default" : "outline"
+                          user.role === "ADMINISTRADOR" ? "default" : "outline"
                         }
                         className={
-                          user.role === "Administrador"
+                          user.role === "ADMINISTRADOR"
                             ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
                             : "bg-green-100 text-green-800 hover:bg-green-100"
                         }
