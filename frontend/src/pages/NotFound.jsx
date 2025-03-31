@@ -12,7 +12,7 @@ const NotFound = () => {
           Oops! La pagina que buscas no existe.
         </p>
         <Link
-          to="/"
+          to="/dashboard"
           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
         >
           Volver al Inicio
