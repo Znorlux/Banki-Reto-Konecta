@@ -220,7 +220,7 @@ const ProductTable = ({ onProductsLoaded }) => {
             <div className="text-center p-8">
               <p className="text-gray-500 mb-4">No hay productos registrados</p>
               <Button
-                onClick={() => navigate("/ventas/nueva")}
+                onClick={() => navigate("/sales/new")}
                 className="bg-indigo-600 hover:bg-indigo-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -304,7 +304,7 @@ const ProductTable = ({ onProductsLoaded }) => {
                             variant="ghost"
                             size="icon"
                             onClick={() =>
-                              navigate(`/ventas/editar/${product.id}`)
+                              navigate(`/sales/edit/${product.id}`)
                             }
                             className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-full"
                           >
