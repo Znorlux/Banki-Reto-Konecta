@@ -193,8 +193,8 @@ const UserForm = ({ defaultValues = {}, onChange, isEdit = false }) => {
             <SelectValue placeholder="Seleccionar rol" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Administrador">Administrador</SelectItem>
-            <SelectItem value="Asesor">Asesor</SelectItem>
+            <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
+            <SelectItem value="ASESOR">Asesor</SelectItem>
           </SelectContent>
         </Select>
       </div>
