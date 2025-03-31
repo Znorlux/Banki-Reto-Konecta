@@ -212,7 +212,7 @@ const ProductTable = ({ onProductsLoaded }) => {
             Productos financieros
           </CardTitle>
           <Button
-            onClick={() => navigate("/ventas/nueva")}
+            onClick={() => navigate("/sales/new")}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4"
           >
             <Plus className="h-4 w-4" />
@@ -237,7 +237,7 @@ const ProductTable = ({ onProductsLoaded }) => {
             <div className="text-center p-8">
               <p className="text-gray-500 mb-4">No hay productos registrados</p>
               <Button
-                onClick={() => navigate("/ventas/nueva")}
+                onClick={() => navigate("/sales/new")}
                 className="bg-indigo-600 hover:bg-indigo-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
