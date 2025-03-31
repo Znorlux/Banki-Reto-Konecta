@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 
+import ProductDetailModal from "./Products/ProductDetailModal";
+
 // URL base de la API
 const API_URL = "http://localhost:5000/api";
 
@@ -44,6 +46,8 @@ const ProductTable = ({ onProductsLoaded }) => {
   const [totalQuota, setTotalQuota] = useState(0);
   const [deleteProduct, setDeleteProduct] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
   // Cargar productos al montar el componente
   useEffect(() => {
@@ -94,6 +98,12 @@ const ProductTable = ({ onProductsLoaded }) => {
   const handleDeleteClick = (product) => {
     setDeleteProduct(product);
     setDeleteDialogOpen(true);
+  };
+
+  // Función para mostrar modal de detalles
+  const handleViewClick = (productId) => {
+    setSelectedProductId(productId);
+    setDetailModalOpen(true);
   };
 
   // Función para eliminar producto
@@ -195,7 +205,7 @@ const ProductTable = ({ onProductsLoaded }) => {
             Productos financieros
           </CardTitle>
           <Button
-            onClick={() => navigate("/sales/new")}
+            onClick={() => navigate("/ventas/nueva")}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4"
           >
             <Plus className="h-4 w-4" />
@@ -220,7 +230,7 @@ const ProductTable = ({ onProductsLoaded }) => {
             <div className="text-center p-8">
               <p className="text-gray-500 mb-4">No hay productos registrados</p>
               <Button
-                onClick={() => navigate("/sales/new")}
+                onClick={() => navigate("/ventas/nueva")}
                 className="bg-indigo-600 hover:bg-indigo-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -295,7 +305,7 @@ const ProductTable = ({ onProductsLoaded }) => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => navigate(`/productos/${product.id}`)}
+                            onClick={() => handleViewClick(product.id)}
                             className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full"
                           >
                             <Eye className="h-4 w-4" />
@@ -304,7 +314,7 @@ const ProductTable = ({ onProductsLoaded }) => {
                             variant="ghost"
                             size="icon"
                             onClick={() =>
-                              navigate(`/sales/edit/${product.id}`)
+                              navigate(`/ventas/editar/${product.id}`)
                             }
                             className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-full"
                           >
@@ -371,6 +381,13 @@ const ProductTable = ({ onProductsLoaded }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal de detalles del producto */}
+      <ProductDetailModal
+        productId={selectedProductId}
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+      />
     </>
   );
 };
