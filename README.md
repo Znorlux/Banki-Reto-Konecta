@@ -138,4 +138,3 @@ docker-compose down
 
 - La aplicación está configurada para usar PostgreSQL a través de Supabase, pero puede adaptarse fácilmente a otras bases de datos relacionales modificando las variables de entorno.
 - Los contenedores Docker están optimizados para entornos de desarrollo y producción.
-- La interfaz de usuario es completamente responsive y se adapta a dispositivos móviles y de escritorio.
